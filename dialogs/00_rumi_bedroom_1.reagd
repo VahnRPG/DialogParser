@@ -1,0 +1,10 @@
+//Dialog - Rumi Bedroom 1
+
+:init
+-> exit
+
+:start
+-> done
+
+:done
+-> exit
