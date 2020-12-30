@@ -1,11 +1,11 @@
 <?php
 class Statement extends Node {
-	public $label;
+	public $section;
 	public $expression;
 	public $conditions = array();
 	
-	public function __construct(Label $label) {
-		$this->label = $label;
+	public function __construct(Section $section) {
+		$this->section = $section;
 	}
 	
 	public function setExpression(Expression $expression) {

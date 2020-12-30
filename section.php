@@ -1,5 +1,5 @@
 <?php
-class Label extends Node {
+class Section extends Node {
 	public $name;
 	public $statements = array();
 	

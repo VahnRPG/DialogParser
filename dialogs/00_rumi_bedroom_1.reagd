@@ -1,10 +1,15 @@
 //Dialog - Rumi Bedroom 1
 
-:init
+@init
 -> exit
 
-:start
+@start
+{
+this is just a test
+how does it work
+does anyone know?
+} [testing]
 -> done
 
-:done
+@done
 -> exit

@@ -90,6 +90,7 @@ class Reader implements Iterator{
 					$this->lines[$cur_pos] = ($this->offset == -1 ? 1 : $this->lines[$this->offset] + 1);
 					$this->offset = $cur_pos;
 				}
+				
 				return TokenIds::NEW_LINE;
 			case "\t":
 			case " ":
@@ -98,29 +99,32 @@ class Reader implements Iterator{
 				}
 				
 				return TokenIds::WHITESPACE;
-			case "!":
-				return $this->readCode();
 			case ":":
 				return TokenIds::COLON;
-			case "$":
-				return $this->readDollar();
-			case "[":
-				return $this->readCondition();
 			case "=":
 				return TokenIds::ASSIGN;
+			case "@":
+				return TokenIds::SECTION;
+			case "{":
+				return $this->readCode();
+			case "[":
+				return $this->readCondition();
 			case "\"":
 				return $this->readString();
 			case "#":
-			case ";":
 				return $this->readComment();
+			case "/":
+				if ($this->peek() == "/") {
+					$this->ignore();
+					
+					return $this->readComment();
+				}
+				break;
+			case "\$":
+				return $this->readDollar();
 		}
 		
-		if ($char == "/" && $this->peek() == "/") {
-			$this->ignore();
-			
-			return $this->readComment();
-		}
-		elseif ($char == "-" && $this->peek() == ">") {
+		if ($char == "-" && $this->peek() == ">") {
 			$this->ignore();
 			
 			return TokenIds::GOTO;
@@ -138,28 +142,13 @@ class Reader implements Iterator{
 	}
 	
 	public function readCode() {
-		$char = "";
-		$previous_char = "\0";
-		while(($char = $this->peek()) != "\n" && $char != "\0") {
+		while($this->peek() != "}") {
 			$this->ignore();
-			if ($previous_char == " " && $char == "[" && $this->peek() != " ") {
-				fseek($this->handle, ftell($this->handle) - 1);
-				
-				return TokenIds::CODE;
-			}
-			$previous_char = $char;
 		}
+		$this->ignore();
+		#fseek($this->handle, ftell($this->handle) - 1);
 		
 		return TokenIds::CODE;
-	}
-	
-	public function readDollar() {
-		$char = "";
-		while(($char = $this->peek()) != "[" && $char != " " && $char != "\n" && $char != "\0") {
-			$this->ignore();
-		}
-		
-		return TokenIds::DOLLAR;
 	}
 	
 	public function readCondition() {
@@ -169,6 +158,28 @@ class Reader implements Iterator{
 		$this->ignore();
 		
 		return TokenIds::CONDITION;
+	}
+	
+	public function readString() {
+		$this->ignore(PHP_INT_MAX, "\"");
+		
+		return TokenIds::STRING;
+	}
+	
+	public function readComment() {
+		$this->ignore(PHP_INT_MAX, "\n");
+		fseek($this->handle, ftell($this->handle) - 1);
+		
+		return TokenIds::COMMENT;
+	}
+	
+	public function readDollar() {
+		$char = "";
+		while(($char = $this->peek()) != "[" && $char != " " && $char != "\n" && $char != "\0") {
+			$this->ignore();
+		}
+		
+		return TokenIds::DOLLAR;
 	}
 	
 	public function readNumber() {
@@ -187,43 +198,33 @@ class Reader implements Iterator{
 		return TokenIds::NUMBER;
 	}
 	
-	public function readComment() {
-		$this->ignore(PHP_INT_MAX, "\n");
-		fseek($this->handle, ftell($this->handle) - 1);
-		
-		return TokenIds::COMMENT;
-	}
-	
-	public function readString() {
-		$this->ignore(PHP_INT_MAX, "\"");
-		
-		return TokenIds::STRING;
-	}
-	
 	public function readIdentifier($char) {
 		$id = "".$char;
-		while(preg_match('/^[a-zA-Z0-9]+$/', $this->peek()) || $this->peek() == "_") {
+		while(preg_match('/^[a-z0-9]+$/i', $this->peek()) || $this->peek() == "_") {
 			$id .= fread($this->handle, 1);
 		}
 		
-		if ($id == "waitwhile") {
+		if ($id == "wait_while") {
 			$this->readCode();
+			
 			return TokenIds::WAIT_WHILE;
 		}
 		
 		return TokenIds::IDENTIFIER;
 	}
 	
-	public function peek() {
+	public function peek(int $length = 1) {
 		$cur_pos = ftell($this->handle);
-		$output = fread($this->handle, 1);
+		for($i=0; $i<$length; $i++) {
+			$output = fread($this->handle, 1);
+		}
 		fseek($this->handle, $cur_pos);
 		
 		return $output;
 	}
 	
-	public function ignore($size = 1, $check_char = "\0") {
-		for($i = 0; $i < $size; $i++) {
+	public function ignore(int $length = 1, $check_char = "\0") {
+		for($i = 0; $i < $length; $i++) {
 			$char = fread($this->handle, 1);
 			if ($char == $check_char) {
 				break;
@@ -265,12 +266,10 @@ class Reader implements Iterator{
 			$old_token = clone $this->token;
 		}
 		
-		#echo " Peek1: ".$old_token->id." -> ".$old_token->start_pos."!\n";
 		$token = clone $old_token;
 		fseek($this->handle, $old_token->end_pos);
 		$this->readToken($token);
 		fseek($this->handle, $old_token->start_pos);
-		#echo "  Peek2: ".$token->id." -> ".$old_token->start_pos."!\n";
 		
 		return $token;
 	}

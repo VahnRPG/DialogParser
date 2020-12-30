@@ -30,7 +30,7 @@ class PauseExpression extends Expression {
 	public $pause_time = 0.0;
 }
 
-class ParrotExpression extends Expression {
+class SayChoiceExpression extends Expression {
 	public $active = true;
 }
 

@@ -34,7 +34,9 @@ try {
 	foreach($files as $file) {
 		$reader = new Reader($file);
 		$parser = new Parser($reader);
-		$parser->parse();
+		$sections = $parser->parse();
+		print_r($sections);
+		echo "Total sections: ".count($sections)."!\n";
 		die;
 	}
 }

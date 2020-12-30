@@ -1,5 +1,5 @@
 <?php
-require_once("label.php");
+require_once("section.php");
 require_once("statement.php");
 require_once("expression.php");
 require_once("condition.php");
