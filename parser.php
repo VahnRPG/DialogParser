@@ -115,8 +115,8 @@ class Parser {
 	
 	private function processInstructionExpression(Statement $statement) {
 		$identifier = $this->reader->readTokenText();
-		if ($identifier == "shut_up") {
-			return new ShutupExpression($statement);
+		if ($identifier == "stop_talking") {
+			return new StopTalkingExpression($statement);
 		}
 		elseif ($identifier == "pause") {
 			$expression = new PauseExpression($statement);

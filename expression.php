@@ -42,7 +42,7 @@ class OverrideExpression extends Expression {
 	public $node;
 }
 
-class ShutupExpression extends Expression {
+class StopTalkingExpression extends Expression {
 }
 
 class AllowObjectsExpression extends Expression {
