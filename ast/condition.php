@@ -15,18 +15,34 @@ abstract class Condition extends Node {
 }
 
 class OnceCondition extends Condition {
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 
 class ShowOnceCondition extends Condition {
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 
 class OnceEverCondition extends Condition {
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 
 class TempOnceCondition extends Condition {
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 
 class CodeCondition extends Condition {
 	public $code;
+	
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 ?>

@@ -10,5 +10,9 @@ class Section extends Node {
 	public function addStatement(Statement $statement) {
 		$this->statements[] = $statement;
 	}
+	
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 ?>

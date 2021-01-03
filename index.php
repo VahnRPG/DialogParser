@@ -1,7 +1,5 @@
 <?php
-require_once("reader.php");
-require_once("parser.php");
-require_once("tokens.php");
+require_once("dialog.php");
 
 function find_files($dir, array $file_types, $files=array()) {
 	if (is_dir($dir)) {
@@ -30,13 +28,23 @@ function find_files($dir, array $file_types, $files=array()) {
 }
 
 try {
+	$dialogs = array();
 	$files = find_files(getcwd()."/dialogs", array("reagd"));
 	foreach($files as $file) {
-		$reader = new Reader($file);
-		$parser = new Parser($reader);
-		$sections = $parser->parse();
-		print_r($sections);
-		echo "Total sections: ".count($sections)."!\n";
+		$dialog = new Dialog($file);
+		$dialog->start(NULL, "init");
+		$dialogs[$dialog->name] = $dialog;
+	}
+	
+	foreach($dialogs as $dialog_name => $dialog) {
+		$dialog->start("dylan", "start");
+		do {
+			if ($dialog->state == DialogStates::WAIT_CHOICE) {
+				$dialog->choose(1);
+			}
+			$dialog->update();
+		} while($dialog->state != DialogStates::NONE);
+		echo "Done!\n";
 		die;
 	}
 }

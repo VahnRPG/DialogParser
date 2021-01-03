@@ -1,17 +1,19 @@
 <?php
-require_once("node.php");
+require_once("parser/reader.php");
+require_once("parser/tokens.php");
 
 class Parser {
 	private $reader;
 	
-	public function __construct(Reader $reader) {
-		$this->reader = $reader;
+	public function __construct($file_name) {
+		$this->reader = new Reader($file_name);
 	}
 	
 	public function parse() {
 		$sections = array();
 		while (!$this->match(array(TokenIds::END))) {
-			$sections[] = $this->processSection();
+			$section = $this->processSection();
+			$sections[] = $section;
 		}
 		
 		return $sections;
@@ -21,7 +23,7 @@ class Parser {
 		$this->reader->next();
 		
 		$section = new Section($this->reader->readTokenText());
-		echo "Section: ".$section->name."!\n";
+		#echo "Section: ".$section->name."!\n";
 		do {
 			if ($this->match(array(TokenIds::SECTION)) || $this->match(array(TokenIds::END))) {
 				break;
@@ -92,10 +94,9 @@ class Parser {
 	}
 	
 	private function processSayExpression(Statement $statement) {
-		$actor = $this->reader->readTokenText($this->reader->token);
+		$actor = $this->reader->readTokenText();
 		$this->reader->next();
 		$text = $this->reader->readTokenText();
-		$this->reader->next();
 		
 		$expression = new SayExpression($statement);
 		$expression->actor = $actor;
@@ -196,6 +197,7 @@ class Parser {
 	
 	private function processChoiceExpression(Statement $statement) {
 		$number = (int) $this->reader->readTokenText($this->reader->token);
+		echo "Here: ".$number."!\n";
 		$this->reader->next();
 		
 		$text = "";

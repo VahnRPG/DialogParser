@@ -1,5 +1,5 @@
 <?php
-class Reader implements Iterator{
+class Reader implements Iterator {
 	public $token;
 	
 	private $position = 0;

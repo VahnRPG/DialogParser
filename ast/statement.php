@@ -15,5 +15,9 @@ class Statement extends Node {
 	public function addCondition(Condition $condition) {
 		$this->conditions[] = $condition;
 	}
+	
+	public function accept(Visitor $visitor) {
+		$visitor->visit($this);
+	}
 }
 ?>

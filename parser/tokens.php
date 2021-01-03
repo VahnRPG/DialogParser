@@ -1,20 +1,20 @@
 <?php
 class TokenIds {
 	const NONE = "NONE";
-	const NEW_LINE = "NEW_LINE";
-	const IDENTIFIER = "IDENTIFIER";
-	const WAIT_WHILE = "WAIT_WHILE";
-	const NUMBER = "NUMBER";
 	const WHITESPACE = "WHITESPACE";
-	const SECTION = "SECTION";
-	const COLON = "COLON";
-	const CONDITION = "CONDITION";
+	const NEW_LINE = "NEW_LINE";
+	const COMMENT = "COMMENT";
+	const NUMBER = "NUMBER";
 	const STRING = "STRING";
 	const ASSIGN = "ASSIGN";
-	const COMMENT = "COMMENT";
+	const IDENTIFIER = "IDENTIFIER";
+	const DOLLAR = "DOLLAR";
+	const SECTION = "SECTION";
+	const CONDITION = "CONDITION";
+	const COLON = "COLON";
 	const GOTO = "GOTO";
 	const CODE = "CODE";
-	const DOLLAR = "DOLLAR";
+	const WAIT_WHILE = "WAIT_WHILE";
 	const END = "END";
 }
 
